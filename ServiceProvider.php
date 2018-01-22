@@ -88,7 +88,7 @@ class ServiceProvider {
             throw new Exception(
               "Failed to configure the Slim application; the specified HTTP ".
               "method '$httpMethod' is not valid or is not supported.",
-              100
+              -100
             );
             break;
         } // switch ($httpMethod)
@@ -248,7 +248,7 @@ class ServiceProvider {
         "Failed to import the service definition file '$filePath', ".
         "the file could not be found. Check that the file exists and ". 
         "that the file path is spelled correctly.",
-        100
+        -100
       );
     }
 

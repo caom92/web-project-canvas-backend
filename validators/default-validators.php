@@ -11,7 +11,7 @@ class NumberValidator implements Validator {
     if (!isNumeric($value)) {
       throw new Exception(
         "Input argument '$name' is not a numeric value.",
-        102
+        -301
       );
     }
   }
@@ -27,7 +27,7 @@ class IntegerValidator implements Validator {
     if (!isInteger($value, $min, $max)) {
       throw new Exception(
         "Input argument '$name' is not an integer value within [$min, $max]",
-        103
+        -302
       );
     }
   }
@@ -38,7 +38,7 @@ class FloatValidator implements Validator {
     if (!isFloat($value)) {
       throw new Exception(
         "Input argument '$name' is not a floating-point value.",
-        105
+        -303
       );
     }
   }
@@ -49,7 +49,7 @@ class BooleanValidator implements Validator {
     if (!isBoolean($value)) {
       throw new Exception(
         "Input argument '$name' is not a boolean value",
-        110
+        -304
       );
     }
   }
@@ -73,7 +73,7 @@ class StringValidator implements Validator {
       throw new Exception(
         "Input argument '$name' is not a string with character length within "
         ."[$min, $max]",
-        107
+        -305
       );
     }
   }
@@ -84,7 +84,7 @@ class EmailValidator implements Validator {
     if (!stringIsEmail($value)) {
       throw new Exception(
         "Input argument '$name' is not an email string.",
-        109
+        -306
       );
     }
   }
@@ -95,7 +95,7 @@ class PhoneValidator implements Validator {
     if (!isPhoneNumber($value)) {
       throw new Exception(
         "Input argument '$name' is not a phone number.",
-        116
+        -307
       );
     }
   }
@@ -107,7 +107,7 @@ class DateTimeValidator implements Validator {
       throw new Exception(
         "Input argument '$name' is not a date and/or time literal of ".
         "format '{$attributes['format']}'",
-        111
+        -308
       );
     }
   }
@@ -127,7 +127,7 @@ class FilesValidator implements Validator {
       && array_key_exists('format', $attributes);
 
     if (!$wasFileReceived && !$isOptional) {
-      throw new Exception("File '$filename' is undefined.", 115);
+      throw new Exception("File '$filename' is undefined.", -309);
     }
 
     if ($hasFormatAttribute) {
@@ -149,14 +149,14 @@ class FilesValidator implements Validator {
         if (!isPdfFile($file)) {
           throw new Exception(
             "A file in '$filename' is not a document file",
-            113
+            -310
           );
         }
       }
     } else if (!isPdfFile($_FILES[$filename]['tmp_name'])) {
       throw new Exception(
         "The file '{$_FILES[$filename]['name']}' is not a document file",
-        113
+        -310
       );
     }
   }
@@ -167,14 +167,14 @@ class FilesValidator implements Validator {
         if (!isBitmapFile($file)) {
           throw new Exception(
             "A file in '$name' is not a bitmap file",
-            114
+            -311
           );
         }
       }
     } else if (!isBitmapFile($_FILES[$filename]['tmp_name'])) {
       throw new Exception(
         "The file '{$_FILES[$filename]['name']}' is not a bitmap file",
-        114
+        -311
       );
     }
   }
@@ -221,7 +221,7 @@ class ArrayValidator implements Validator {
         }
       }
     } else if (!$isOptional) {
-      throw new Exception("Input argument '$name' is an empty array", 112);
+      throw new Exception("Input argument '$name' is an empty array", -312);
     }
   }
 
@@ -249,7 +249,7 @@ class ArrayValidator implements Validator {
           $value = NULL;
         }
       } else if (!$isOptional && !$isFileType) {
-        throw new \Exception("Input value '$name' is undefined.", 101);
+        throw new Exception("Input value '$name' is undefined.", -300);
       }
 
       $validator = $this->validators[$validatorIdx];
