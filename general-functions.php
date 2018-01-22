@@ -23,7 +23,7 @@ function storeUploadedFileInServer(
   if (!$wasMoveSuccessful) {
     throw new \Exception(
       "Failed to store uploaded file: $fileOriginalName", 
-      117
+      -200
     );
   }
 
