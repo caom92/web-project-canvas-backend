@@ -2,7 +2,7 @@
 
 namespace DataBase;
 
-class Table { 
+abstract class Table { 
   private $tableName;
   private $dbConnection;
   private $cachedQueries = [];

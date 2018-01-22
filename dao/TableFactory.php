@@ -2,7 +2,6 @@
 
 namespace DataBase;
 
-// TODO: corregir la direccion
 require_once realpath(__DIR__."/../../../config/db.php");
 
 
@@ -68,6 +67,6 @@ class TableFactory {
       isset($this->tableClassDefinitionFilePaths[$tableClass])
       && array_key_exists($tableClass, $this->tableClassDefinitionFilePaths);
   }
-} // class TableFactory
+}
 
 ?>
