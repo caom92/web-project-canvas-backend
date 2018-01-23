@@ -6,11 +6,14 @@ require_once realpath(__DIR__."/../../../config/db.php");
 
 
 class TableFactory {
+  private $baseNamespace;
   private $dbConnection;
   private $cachedTables = [];
   private $tableClassDefinitionFilePaths = [];
   
-  function __construct($profileName, $tablestableClassDefinitionFilePaths) {
+  function __construct(
+    $baseNamespace, $profileName, $tablestableClassDefinitionFilePaths
+  ) {
     $this->dbConnection = new \PDO(
       'mysql:host='.DB_PROFILES[$profileName]['host'].';'.
       'dbname='.DB_PROFILES[$profileName]['db'].';charset=utf8mb4',
@@ -42,6 +45,7 @@ class TableFactory {
         }
 
         require_once $this->tableClassDefinitionFilePaths[$tableClass];
+        $tableClass = $this->baseNamespace.$tableClass;
         $this->cachedTables[$tableClass] = new $tableClass($this->dbConnection);
       } else {
         throw new \Exception(
