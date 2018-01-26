@@ -2,8 +2,8 @@
 
 namespace Core;
 
-require_once realpath(__DIR__.'/../../config/site.php');
-require_once realpath(__DIR__.'/../autoload.php');
+require_once realpath(__DIR__.'/../config/site.php');
+require_once realpath(__DIR__.'/../vendor/autoload.php');
 
 use \Slim\App;
 use \Monolog\Logger;
@@ -14,6 +14,8 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use \Exception;
 
 
+// TODO: tener la implementacion de esta clase abstraida en muchas funciones 
+// realmente incrementa la productividad?
 class ServiceProvider {
   private $slimApp;
 
@@ -224,7 +226,10 @@ class ServiceProvider {
     {
       $result = NULL;
       $serviceInputData = $request->getParsedBody();
-      $serviceInputData = array_merge($serviceInputData, $args);
+      if (count($args) > 0) {
+        $serviceInputData = array_merge($serviceInputData, $args);
+      }
+      
       try {
         $result = ServiceProvider::executeService(
           $this, $serviceFilePath, $serviceInputData

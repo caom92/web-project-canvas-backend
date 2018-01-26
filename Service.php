@@ -29,23 +29,23 @@ abstract class Service {
 
   public static function initDefaultValidators() {
     self::$validators = [
-      'number' => new \Core\Validators\NumberValidator(),
-      'int' => new \Core\Validators\IntegerValidator(),
-      'float' => new \Core\Validators\FloatValidator(),
-      'bool' => new \Core\Validators\BooleanValidator(),
-      'string' => new \Core\Validators\StringValidator(),
-      'email' => new \Core\Validators\EmailValidator(),
-      'phone' => new \Core\Validators\PhoneValidator(),
-      'datetime' => new \Core\Validators\DateTimeValidator(),
-      'array' => new \Core\Validators\ArrayValidator(),
-      'files' => new \Core\Validators\FilesValidator()
+      'number' => new \Core\Validations\NumberValidator(),
+      'int' => new \Core\Validations\IntegerValidator(),
+      'float' => new \Core\Validations\FloatValidator(),
+      'bool' => new \Core\Validations\BooleanValidator(),
+      'string' => new \Core\Validations\StringValidator(),
+      'email' => new \Core\Validations\EmailValidator(),
+      'phone' => new \Core\Validations\PhoneValidator(),
+      'datetime' => new \Core\Validations\DateTimeValidator(),
+      'array' => new \Core\Validations\ArrayValidator(),
+      'files' => new \Core\Validations\FilesValidator()
     ];
 
     self::$validators['array']->setValidators(self::$validators);
   }
 
   public function validateInputData($modules, $data) {
-    foreach ($inputDataDescriptor as $inputField => $attributes) {
+    foreach ($this->inputDataDescriptor as $inputField => $attributes) {
       $isOptional = 
         isset($attributes['optional'])
         && array_key_exists('optional', $attributes);

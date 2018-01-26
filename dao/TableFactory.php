@@ -2,7 +2,7 @@
 
 namespace DataBase;
 
-require_once realpath(__DIR__."/../../../config/db.php");
+require_once realpath(__DIR__."/../../config/db.php");
 
 
 class TableFactory {

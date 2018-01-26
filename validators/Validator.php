@@ -5,6 +5,8 @@ namespace Core\Validations;
 require_once realpath(__DIR__.'/data-validations.php');
 
 
+// TODO: realmente hay alguna ventaja hacer que los validadores sean clases y 
+// no funciones?
 // Se decidio que modules tuviera que ser proveido explicitamente como 
 // argumento de los metodos de esta clase en lugar de hacerlo un atributo de la 
 // misma porque, como la creacion de la instancia de esta clase esta oculta 
