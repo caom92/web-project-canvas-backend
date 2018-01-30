@@ -49,24 +49,31 @@ abstract class Service {
       $isOptional = 
         isset($attributes['optional'])
         && array_key_exists('optional', $attributes);
+
       $hasTypeAttribute = 
         isset($attributes['type'])
         && array_key_exists('type', $attributes);
+
       $wasInputValueProvided = 
         isset($data[$inputField])
         && array_key_exists($inputField, $data);
-      $isFileType = $attributes['type'] == 'files';
 
-      if ($wasInputValueProvided) {
-        if ($hasTypeAttribute) {
+      $isFileType = ($hasTypeAttribute) ? 
+        $attributes['type'] == 'files'
+        : false;
+
+      if ($hasTypeAttribute) {
+        if ($wasInputValueProvided) {
           $validatorIdx = $attributes['type'];
           $inputValue = $data[$inputField];
+        } else if (!$isOptional && !$isFileType) {
+          throw new \Exception("Input value '$inputField' is undefined.", 101);
         } else {
-          $validatorIdx = $inputField;
-          $inputValue = NULL;
+          continue;
         }
-      } else if (!$isOptional && !$isFileType) {
-        throw new \Exception("Input value '$inputField' is undefined.", 101);
+      } else {
+        $validatorIdx = $inputField;
+        $inputValue = NULL;
       }
 
       $validator = self::$validators[$validatorIdx];

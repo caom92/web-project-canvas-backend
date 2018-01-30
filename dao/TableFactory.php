@@ -14,6 +14,7 @@ class TableFactory {
   function __construct(
     $baseNamespace, $profileName, $tablestableClassDefinitionFilePaths
   ) {
+    $this->baseNamespace = $baseNamespace;
     $this->dbConnection = new \PDO(
       'mysql:host='.DB_PROFILES[$profileName]['host'].';'.
       'dbname='.DB_PROFILES[$profileName]['db'].';charset=utf8mb4',
@@ -25,7 +26,7 @@ class TableFactory {
         \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
       ]   
     );
-    $this->tableClassDefinitionFiles = $tablestableClassDefinitionFiles;
+    $this->tableClassDefinitionFilePaths = $tablestableClassDefinitionFilePaths;
   }
 
   function isDataBaseConnectionEstablished() {
