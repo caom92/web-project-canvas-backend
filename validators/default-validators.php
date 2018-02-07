@@ -81,7 +81,7 @@ class StringValidator implements Validator {
 
 class EmailValidator implements Validator {
   public function execute($modules, $name, $value, $attributes) {
-    if (!stringIsEmail($value)) {
+    if (!isEmailString($value)) {
       throw new Exception(
         "Input argument '$name' is not an email string.",
         -306

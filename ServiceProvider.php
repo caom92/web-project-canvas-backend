@@ -257,7 +257,7 @@ class ServiceProvider {
       );
     }
 
-    $service = $this->getService($filePath);
+    $service = ServiceProvider::getService($filePath);
     $service->validateInputData($slimAppModules, $inputData);
     $result = $service->execute($slimAppModules, $inputData);
     return ServiceProvider::createResponseJson($result);
@@ -283,10 +283,10 @@ class ServiceProvider {
     );
   }
 
-  private function getService($filePath) {
+  private static function getService($filePath) {
     $service = NULL;
     require_once $filePath;
-    return $serice;
+    return $service;
   }
 
   private static function createResponseJson(
