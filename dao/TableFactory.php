@@ -1,11 +1,11 @@
 <?php
 
 namespace DataBase;
-
 require_once realpath(__DIR__."/../../config/db.php");
 
 
-class TableFactory {
+class TableFactory 
+{ 
   private $baseNamespace;
   private $dbConnection;
   private $cachedTables = [];
@@ -60,7 +60,7 @@ class TableFactory {
 
     return $this->cachedTables[$tableClass];
   }
-
+  
   private function isTableCached($tableClass) {
     return
       isset($this->cachedTables[$tableClass])

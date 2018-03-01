@@ -2,19 +2,22 @@
 
 namespace Core\Validations;
 
-function equalsValue($data, $value) {
+function equalsValue($data, $value) 
+{
   if (isset($data)) {
     return $data === $value;
   } 
   return false;
 }
 
-function isNumeric($data) {
+function isNumeric($data) 
+{
   return is_numeric($data);
 }
 
 const INT_MIN = ~PHP_INT_MAX;
-function isInteger($data, $min = INT_MIN, $max = PHP_INT_MAX) {
+function isInteger($data, $min = INT_MIN, $max = PHP_INT_MAX) 
+{
   return filter_var(
     $data, 
     FILTER_VALIDATE_INT, 
@@ -25,7 +28,8 @@ function isInteger($data, $min = INT_MIN, $max = PHP_INT_MAX) {
   ) != NULL;
 }
 
-function isFloat($data) {
+function isFloat($data) 
+{
   return filter_var(
     $data, 
     FILTER_VALIDATE_FLOAT,
@@ -33,7 +37,8 @@ function isFloat($data) {
   ) != NULL;
 }
 
-function isString($data, $minLength = 0, $maxLength = PHP_INT_MAX) {
+function isString($data, $minLength = 0, $maxLength = PHP_INT_MAX) 
+{
   if (is_string($data)) {
     $currentLength = strlen($data);
     return $minLength <= $currentLength && $currentLength <= $maxLength;
@@ -41,11 +46,13 @@ function isString($data, $minLength = 0, $maxLength = PHP_INT_MAX) {
   return false;
 }
 
-function isEmailString($data) {
+function isEmailString($data) 
+{
   return filter_var($data, FILTER_VALIDATE_EMAIL) != NULL;
 }
 
-function isPdfFile($data) {
+function isPdfFile($data) 
+{
   if (isset($data)) {
     $fileInfo = new finfo();
     $fileType = $fileInfo->file($data);    
@@ -55,7 +62,8 @@ function isPdfFile($data) {
   return false;
 }
 
-function isBitmapFile($data) {
+function isBitmapFile($data) 
+{
   if (isset($data)) {
     $fileType = exif_imagetype($data);
     $isJpeg = $fileType === IMAGETYPE_JPEG;
@@ -67,12 +75,14 @@ function isBitmapFile($data) {
   return false;
 }
 
-function isDateTime($data, $format) {
+function isDateTime($data, $format) 
+{
   $dateTime = \DateTime::createFromFormat($format, $data);
   return $dateTime !== FALSE;
 }
 
-function isBoolean($data) {
+function isBoolean($data) 
+{
   if (is_bool($data)) {
     return true;
   }
@@ -95,7 +105,8 @@ function isBoolean($data) {
   return false;
 }
 
-function isPhoneNumber($data) {
+function isPhoneNumber($data) 
+{
   $phone = strtolower($data);
 
   // remueve guiones, espacios, parentesis, puntos y cadenas ext y Ext

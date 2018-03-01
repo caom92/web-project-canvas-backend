@@ -1,13 +1,14 @@
 <?php
 
 namespace Core\Validations;
-
 require_once realpath(__DIR__.'/Validator.php');
 use \Exception;
 
 
-class NumberValidator implements Validator {
-  public function execute($modules, $name, $value, $attributes) {
+class NumberValidator implements Validator 
+{
+  // Override Validator
+  function execute($modules, $name, $value, $attributes) {
     if (!isNumeric($value)) {
       throw new Exception(
         "Input argument '$name' is not a numeric value.",
@@ -17,8 +18,10 @@ class NumberValidator implements Validator {
   }
 }
 
-class IntegerValidator implements Validator {
-  public function execute($modules, $name, $value, $attributes) {
+class IntegerValidator implements Validator 
+{
+  // Override Validator
+  function execute($modules, $name, $value, $attributes) {
     $min = (isset($attributes['min'])) ? 
       $attributes['min'] : INT_MIN;
     $max = (isset($attributes['max'])) ? 
@@ -33,8 +36,10 @@ class IntegerValidator implements Validator {
   }
 }
 
-class FloatValidator implements Validator {
-  public function execute($modules, $name, $value, $attributes) {
+class FloatValidator implements Validator 
+{
+  // Override Validator
+  function execute($modules, $name, $value, $attributes) {
     if (!isFloat($value)) {
       throw new Exception(
         "Input argument '$name' is not a floating-point value.",
@@ -44,8 +49,10 @@ class FloatValidator implements Validator {
   }
 }
 
-class BooleanValidator implements Validator {
-  public function execute($modules, $name, $value, $attributes) {
+class BooleanValidator implements Validator 
+{
+  // Override Validator
+  function execute($modules, $name, $value, $attributes) {
     if (!isBoolean($value)) {
       throw new Exception(
         "Input argument '$name' is not a boolean value",
@@ -55,8 +62,10 @@ class BooleanValidator implements Validator {
   }
 }
 
-class StringValidator implements Validator {
-  public function execute($modules, $name, $value, $attributes) {
+class StringValidator implements Validator 
+{
+  // Override Validator
+  function execute($modules, $name, $value, $attributes) {
     $hasLengthAttribute = isset($attributes['length']);
     $hasMinLengthAttribute = isset($attributes['min_length']);
     $hasMaxLengthAttribute = isset($attributes['max_length']);
@@ -79,8 +88,10 @@ class StringValidator implements Validator {
   }
 }
 
-class EmailValidator implements Validator {
-  public function execute($modules, $name, $value, $attributes) {
+class EmailValidator implements Validator 
+{
+  // Override Validator
+  function execute($modules, $name, $value, $attributes) {
     if (!isEmailString($value)) {
       throw new Exception(
         "Input argument '$name' is not an email string.",
@@ -90,8 +101,10 @@ class EmailValidator implements Validator {
   }
 }
 
-class PhoneValidator implements Validator {
-  public function execute($modules, $name, $value, $attributes) {
+class PhoneValidator implements Validator 
+{
+  // Override Validator
+  function execute($modules, $name, $value, $attributes) {
     if (!isPhoneNumber($value)) {
       throw new Exception(
         "Input argument '$name' is not a phone number.",
@@ -101,8 +114,10 @@ class PhoneValidator implements Validator {
   }
 }
 
-class DateTimeValidator implements Validator {
-  public function execute($modules, $name, $value, $attributes) {
+class DateTimeValidator implements Validator 
+{
+  // Override Validator
+  function execute($modules, $name, $value, $attributes) {
     if (!isDateTime($value, $attributes['format'])) {
       throw new Exception(
         "Input argument '$name' is not a date and/or time literal of ".
@@ -113,8 +128,10 @@ class DateTimeValidator implements Validator {
   }
 }
 
-class FilesValidator implements Validator {
-  public function execute($modules, $name, $value, $attributes) {
+class FilesValidator implements Validator 
+{
+  // Override Validator
+  function execute($modules, $name, $value, $attributes) {
     $filename = $attributes['name'];
     $wasFileReceived = 
       isset($_FILES[$filename]) 
@@ -186,14 +203,16 @@ class FilesValidator implements Validator {
 // ArrayValidator, se genera una dependencia circular que no puede resolverse. 
 // La unica alternativa es que ArrayValidator tenga su propia copia de estos 
 // atributos, que es lo que hacemos aqui
-class ArrayValidator implements Validator {
+class ArrayValidator implements Validator 
+{
   private $validators;
-
-  public function setValidators($validators) {
+  
+  function setValidators($validators) {
     $this->validators = $validators;
   }
 
-  public function execute($modules, $name, $value, $attributes) {
+  // Override Validator
+  function execute($modules, $name, $value, $attributes) {
     $isOptional = 
       isset($attributes['optional']) 
       && array_key_exists('optional', $attributes);

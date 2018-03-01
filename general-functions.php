@@ -2,7 +2,8 @@
 
 namespace Core;
 
-function arrayHasStringKeys($array) {
+function arrayHasStringKeys($array) 
+{
   $keys = array_keys($array);
   $stringKeys = array_filter($keys, 'is_string');
   return count($stringKeys) > 0;
@@ -30,18 +31,21 @@ function storeUploadedFileInServer(
   return $destinationFileName;
 }
 
-function getFileSysSlash() {
+function getFileSysSlash() 
+{
   $osName = substr(PHP_OS, 0, 3);
   $osName = strtoupper($osName);
   return ($osName === 'WIN') ? '\\' : '/';
 }
 
-function getFileFormatFromName($filename) {
+function getFileFormatFromName($filename) 
+{
   $formatStartPos = strpos($filename, '.');
   return substr($filename, $formatStartPos + 1);
 }
 
-function resetSessionID($session, $segment) {
+function resetSessionID($session, $segment) 
+{
   $userID = $segment->get('user_id');
   $segment->set('user_id', NULL);
   $session->regenerateId();

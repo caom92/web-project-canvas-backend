@@ -16,9 +16,10 @@ use \Exception;
 
 // TODO: tener la implementacion de esta clase abstraida en muchas funciones 
 // realmente incrementa la productividad?
-class ServiceProvider {
+class ServiceProvider 
+{
   private $slimApp;
-
+  
   function __construct($customModules, $serviceDefinitionFilePaths) {
     $this->initSlimApp();
     $this->initSlimAppHandlers();
@@ -27,7 +28,7 @@ class ServiceProvider {
     $this->initSlimAppServices($serviceDefinitionFilePaths);
   }
 
-  public function serveRemoteClient() {
+  function serveRemoteClient() {
     $this->slimApp->run();
   }
 
@@ -89,7 +90,8 @@ class ServiceProvider {
           default:
             throw new Exception(
               "Failed to configure the Slim application; the specified HTTP ".
-              "method '$httpMethod' is not valid or is not supported.",
+              "method '$httpMethod' for service '$serviceName' is not valid ".
+              "or is not supported.",
               -100
             );
             break;
