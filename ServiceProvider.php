@@ -159,7 +159,7 @@ class ServiceProvider
         'X-Requested-With, Content-Type, Accept, Origin, Authorization'
       );
       $response = $response->withHeader(
-        'Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS'
+        'Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS'
       );
       $response = $response->withHeader('Access-Control-Allow-Origin', '*');
       return $next($request, $response);
@@ -176,13 +176,10 @@ class ServiceProvider
         'X-Requested-With, Content-Type, Accept, Origin, Authorization'
       );
       $response = $response->withHeader(
-        'Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS'
+        'Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS'
       );
       
-      // Algunos navegadores agregan un / al final del URL; hay que removerlo
-      // de lo contrario, podria incorrectamente restringir el acceso a un 
-      // referer permitido
-      $currentOrigin = rtrim($_SERVER['HTTP_REFERER'], '/');
+      $currentOrigin = $_SERVER['HTTP_ORIGIN'];
       $isOriginAllowed = FALSE;
       foreach (CORS_REQUESTS['allowed_origins'] as $origin) {
         if ($currentOrigin == $origin) {
@@ -229,7 +226,9 @@ class ServiceProvider
       $result = NULL;
       $serviceInputData = $request->getParsedBody();
       if (count($args) > 0) {
-        $serviceInputData = array_merge($serviceInputData, $args);
+        $serviceInputData = array_merge(
+          (isset($serviceInputData)) ? $serviceInputData : [], $args
+        );
       }
       
       try {
