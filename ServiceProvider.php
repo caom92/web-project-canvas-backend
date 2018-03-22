@@ -32,6 +32,61 @@ class ServiceProvider
     $this->slimApp->run();
   }
 
+  private static function executeService(
+    $slimAppModules, $filePath, $inputData
+  ) {
+    $isFilePathValid = isset($filePath) && strlen($filePath) > 0;
+    if (!$isFilePathValid) {
+      throw new Exception(
+        "Failed to import the service definition file '$filePath', ".
+        "the file could not be found. Check that the file exists and ". 
+        "that the file path is spelled correctly.",
+        -100
+      );
+    }
+
+    $service = ServiceProvider::getService($filePath);
+    $service->validateInputData($slimAppModules, $inputData);
+    $result = $service->execute($slimAppModules, $inputData);
+    return ServiceProvider::createResponseJson($result);
+  }
+
+  private static function handleException($slimAppModules, $exception) {
+    $errorCode = $exception->getCode();
+    if ($errorCode == 0) {
+      $errorCode = -1;
+    }
+
+    $errorMessage = $exception->getMessage();
+    $isErrorMessageValid = 
+      isset($errorMessage) && strlen($errorMessage) > 0;
+    if (!$isErrorMessageValid) {
+      $errorMessage = 'Unknown exception ocurred.';
+    }
+
+    $slimAppModules->log->error($errorMessage);
+
+    return ServiceProvider::createResponseJson(
+      NULL, $errorCode, $errorMessage
+    );
+  }
+
+  private static function getService($filePath) {
+    $service = NULL;
+    require_once $filePath;
+    return $service;
+  }
+
+  private static function createResponseJson(
+    $data = NULL, $code = 0, $message = 'Success'
+  ) {
+    return json_encode([
+      'returnCode' => $code,
+      'message' => $message,
+      'data' => $data
+    ], JSON_NUMERIC_CHECK);
+  }
+
   private function initSlimApp() {
     $this->slimApp = new App([
       'settings' => [
@@ -243,61 +298,6 @@ class ServiceProvider
       
       return $response;
     };
-  }
-
-  private static function executeService(
-    $slimAppModules, $filePath, $inputData
-  ) {
-    $isFilePathValid = isset($filePath) && strlen($filePath) > 0;
-    if (!$isFilePathValid) {
-      throw new Exception(
-        "Failed to import the service definition file '$filePath', ".
-        "the file could not be found. Check that the file exists and ". 
-        "that the file path is spelled correctly.",
-        -100
-      );
-    }
-
-    $service = ServiceProvider::getService($filePath);
-    $service->validateInputData($slimAppModules, $inputData);
-    $result = $service->execute($slimAppModules, $inputData);
-    return ServiceProvider::createResponseJson($result);
-  }
-
-  private static function handleException($slimAppModules, $exception) {
-    $errorCode = $exception->getCode();
-    if ($errorCode == 0) {
-      $errorCode = -1;
-    }
-
-    $errorMessage = $exception->getMessage();
-    $isErrorMessageValid = 
-      isset($errorMessage) && strlen($errorMessage) > 0;
-    if (!$isErrorMessageValid) {
-      $errorMessage = 'Unknown exception ocurred.';
-    }
-
-    $slimAppModules->log->error($errorMessage);
-
-    return ServiceProvider::createResponseJson(
-      NULL, $errorCode, $errorMessage
-    );
-  }
-
-  private static function getService($filePath) {
-    $service = NULL;
-    require_once $filePath;
-    return $service;
-  }
-
-  private static function createResponseJson(
-    $data = NULL, $code = 0, $message = 'Success'
-  ) {
-    return json_encode([
-      'returnCode' => $code,
-      'message' => $message,
-      'data' => $data
-    ], JSON_NUMERIC_CHECK);
   }
 }
 

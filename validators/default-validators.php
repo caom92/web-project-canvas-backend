@@ -81,7 +81,7 @@ class StringValidator implements Validator
     if (!isString($value, $minLength, $maxLength)) {
       throw new Exception(
         "Input argument '$name' is not a string with character length within "
-        ."[$min, $max]",
+        ."[$minLength, $maxLength]",
         -305
       );
     }

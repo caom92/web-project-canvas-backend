@@ -21,7 +21,7 @@ abstract class Table
     }
   }
 
-  abstract protected function getCreationQuery();
+  protected abstract function getCreationQuery();
 
   // virtual
   protected function getInitialDataInsertionQuery() {

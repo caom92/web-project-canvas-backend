@@ -19,11 +19,28 @@ abstract class Service
     $this->inputDataDescriptor = $inputDataDescriptor;
   }
 
-  abstract function execute($modules, $data);
+  static function initDefaultValidators() {
+    self::$validators = [
+      'number' => new \Core\Validations\NumberValidator(),
+      'int' => new \Core\Validations\IntegerValidator(),
+      'float' => new \Core\Validations\FloatValidator(),
+      'bool' => new \Core\Validations\BooleanValidator(),
+      'string' => new \Core\Validations\StringValidator(),
+      'email' => new \Core\Validations\EmailValidator(),
+      'phone' => new \Core\Validations\PhoneValidator(),
+      'datetime' => new \Core\Validations\DateTimeValidator(),
+      'array' => new \Core\Validations\ArrayValidator(),
+      'files' => new \Core\Validations\FilesValidator()
+    ];
+
+    self::$validators['array']->setValidators(self::$validators);
+  }  
 
   static function addInputDataValidator($name, $validator) {
     self::$validators[$name] = $validator;
   }
+  
+  abstract function execute($modules, $data);
 
   function validateInputData($modules, $data) {
     foreach ($this->inputDataDescriptor as $inputField => $attributes) {
@@ -61,23 +78,6 @@ abstract class Service
       $validator->execute($modules, $inputField, $inputValue, $attributes);
     }
   }
-
-  static function initDefaultValidators() {
-    self::$validators = [
-      'number' => new \Core\Validations\NumberValidator(),
-      'int' => new \Core\Validations\IntegerValidator(),
-      'float' => new \Core\Validations\FloatValidator(),
-      'bool' => new \Core\Validations\BooleanValidator(),
-      'string' => new \Core\Validations\StringValidator(),
-      'email' => new \Core\Validations\EmailValidator(),
-      'phone' => new \Core\Validations\PhoneValidator(),
-      'datetime' => new \Core\Validations\DateTimeValidator(),
-      'array' => new \Core\Validations\ArrayValidator(),
-      'files' => new \Core\Validations\FilesValidator()
-    ];
-
-    self::$validators['array']->setValidators(self::$validators);
-  }  
 }
 
 Service::initDefaultValidators();
