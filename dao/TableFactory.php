@@ -41,7 +41,7 @@ class TableFactory
             "Failed to create an instance of '$tableClass', ".
             "the file path associated to this class name could not be ".
             "resolved to any file. Maybe the file path is misspelled.",
-            200
+            -200
           );
         }
 
@@ -53,7 +53,7 @@ class TableFactory
           "Failed to create an instance of '$tableClass', no class definition "
           ."file is associated to this class name. Maybe the class name is "
           ."misspelled.",
-          200
+          -200
         );
       }
     }

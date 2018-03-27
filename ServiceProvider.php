@@ -14,8 +14,6 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use \Exception;
 
 
-// TODO: tener la implementacion de esta clase abstraida en muchas funciones 
-// realmente incrementa la productividad?
 class ServiceProvider 
 {
   private $slimApp;

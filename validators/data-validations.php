@@ -39,10 +39,6 @@ function isFloat($data)
 
 function isString($data, $minLength = 0, $maxLength = PHP_INT_MAX) 
 {
-  if (is_numeric($data)) {
-    return false;
-  }
-
   if (is_string($data)) {
     $currentLength = strlen($data);
     return $minLength <= $currentLength && $currentLength <= $maxLength;

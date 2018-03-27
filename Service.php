@@ -62,12 +62,19 @@ abstract class Service
 
       if ($hasTypeAttribute) {
         if ($wasInputValueProvided) {
-          $validatorIdx = $attributes['type'];
           $inputValue = $data[$inputField];
+          if (
+            $inputValue === 'NULL' 
+            || $inputValue === 'null' 
+            || $inputValue === 'undefined'
+          ) {
+            throw new \Exception(
+              "Input value '$inputField' is undefined.", -101
+            );
+          }
+          $validatorIdx = $attributes['type'];
         } else if (!$isOptional && !$isFileType) {
-          throw new \Exception("Input value '$inputField' is undefined.", 101);
-        } else {
-          continue;
+          throw new \Exception("Input value '$inputField' is undefined.", -101);
         }
       } else {
         $validatorIdx = $inputField;
