@@ -110,6 +110,7 @@ class ServiceProvider
   }
 
   private function initSlimAppMiddleware() {
+    $this->slimApp->add($this->getCastNullStringsMiddleware());
     if (CORS_REQUESTS['allowed']) {
       $this->slimApp->add((CORS_REQUESTS['with_credentials']) ?
         $this->getInitCorsWithCredentialsMiddleware()
@@ -268,6 +269,23 @@ class ServiceProvider
         'Content-Type', 
         'application/json;charset=utf8'
       );
+      return $next($request, $response);
+    };
+  }
+
+  private function getCastNullStringsMiddleware() {
+    return function(Request $request, Response $response, $next) {
+      $inputData = $request->getParsedBody();
+      if (isset($inputData)) {
+        foreach ($inputData as $key => $value) {
+          if (
+            $value === 'null' || $value === 'NULL' || $value === 'undefined'
+          ) {
+            $inputData[$key] = NULL;
+          }
+        }
+        $request = $request->withParsedBody($inputData);
+      }
       return $next($request, $response);
     };
   }

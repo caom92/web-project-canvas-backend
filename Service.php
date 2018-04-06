@@ -44,35 +44,23 @@ abstract class Service
 
   function validateInputData($modules, $data) {
     foreach ($this->inputDataDescriptor as $inputField => $attributes) {
+      $wasInputValueProvided = 
+        isset($data[$inputField]) && array_key_exists($inputField, $data);
+
+      $hasTypeAttribute = 
+        isset($attributes['type']) && array_key_exists('type', $attributes);
+      
       $isOptional = 
         isset($attributes['optional'])
         && array_key_exists('optional', $attributes);
 
-      $hasTypeAttribute = 
-        isset($attributes['type'])
-        && array_key_exists('type', $attributes);
-
-      $wasInputValueProvided = 
-        isset($data[$inputField])
-        && array_key_exists($inputField, $data);
-
       $isFileType = ($hasTypeAttribute) ? 
-        $attributes['type'] == 'files'
-        : false;
+        $attributes['type'] == 'files' : FALSE;
 
       if ($hasTypeAttribute) {
         if ($wasInputValueProvided) {
           $inputValue = $data[$inputField];
-          if (
-            $inputValue === 'NULL' 
-            || $inputValue === 'null' 
-            || $inputValue === 'undefined'
-          ) {
-            throw new \Exception(
-              "Input value '$inputField' is undefined.", -101
-            );
-          }
-          $validatorIdx = $attributes['type'];
+          $validatorIdx = $attributes['type'];  
         } else if (!$isOptional && !$isFileType) {
           throw new \Exception("Input value '$inputField' is undefined.", -101);
         }

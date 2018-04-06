@@ -25,7 +25,7 @@ function isInteger($data, $min = INT_MIN, $max = PHP_INT_MAX)
       'min_range' => $min,
       'max_range' => $max
     ]]
-  ) != NULL;
+  ) !== FALSE;
 }
 
 function isFloat($data) 
@@ -34,7 +34,7 @@ function isFloat($data)
     $data, 
     FILTER_VALIDATE_FLOAT,
     FILTER_FLAG_ALLOW_THOUSAND
-  ) != NULL;
+  ) !== FALSE;
 }
 
 function isString($data, $minLength = 0, $maxLength = PHP_INT_MAX) 
@@ -48,7 +48,7 @@ function isString($data, $minLength = 0, $maxLength = PHP_INT_MAX)
 
 function isEmailString($data) 
 {
-  return filter_var($data, FILTER_VALIDATE_EMAIL) != NULL;
+  return filter_var($data, FILTER_VALIDATE_EMAIL) !== FALSE;
 }
 
 function isPdfFile($data) 
@@ -89,7 +89,7 @@ function isBoolean($data)
 
   if (isInteger($data)) {
     $data = intval($data);
-    return isIntegerBetweenValues($data, 0, PHP_INT_MAX);
+    return isInteger($data, 0, PHP_INT_MAX);
   }
 
   if (isString($data)) {

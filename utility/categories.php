@@ -131,14 +131,14 @@ function getCategoryHierarchy($hierarchyDescriptor)
     && array_key_exists('child', $hierarchyDescriptor);
 
   if ($hasChild) {
-    $isAlsoAChild =
+    $isChild =
       isset($hierarchyDescriptor['@name'])
       && array_key_exists('@name', $hierarchyDescriptor);
 
     $child = getCategoryHierarchy($hierarchyDescriptor['child']);
     $parent = new ContinuingCategory(
       $hierarchyDescriptor['idColumn'],
-      ($isAlsoAChild) ? $hierarchyDescriptor['@name'] : NULL,
+      ($isChild) ? $hierarchyDescriptor['@name'] : NULL,
       $hierarchyDescriptor['parseDescriptor'],
       $child
     );
@@ -161,7 +161,7 @@ function parse($data, $descriptor)
       $parsedData[$outputKey] = $data[$inputKey];
     } else {
       $key = substr($inputKey, $reverseIndicatorStart + 1);
-      $parsedData[$key] = $outputKey;
+      $parsedData[$key] = parse($data, $outputKey);
     }
   }
   return $parsedData;

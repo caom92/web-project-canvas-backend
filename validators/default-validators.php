@@ -132,6 +132,7 @@ class FilesValidator implements Validator
 {
   // Override Validator
   function execute($modules, $name, $value, $attributes) {
+    // TODO: usar la interfaz de Slim en lugar de $_FILES
     $filename = $attributes['name'];
     $wasFileReceived = 
       isset($_FILES[$filename]) 

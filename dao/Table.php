@@ -68,15 +68,19 @@ abstract class Table
   }
 
   private function createTable() {
-    $creationQuery = $this->getStatement($this->getCreationQuery());
-    $creationQuery->execute();
+    $queryString = $this->getCreationQuery();
+    if (strlen($queryString) > 0) {
+      $creationQuery = $this->getStatement();
+      $creationQuery->execute();
+    }
   }
 
   private function insertInitialData() {
-    $initialDataInsertionQuery = $this->getStatement(
-      $this->getInitialDataInsertionQuery()
-    );
-    $initialDataInsertionQuery->execute();
+    $queryString = $this->getInitialDataInsertionQuery();
+    if (strlen($queryString) > 0) {
+      $initialDataInsertionQuery = $this->getStatement($queryString);
+      $initialDataInsertionQuery->execute();
+    }
   }
 }
 
