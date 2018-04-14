@@ -8,11 +8,7 @@ abstract class Table
   private $dbConnection;
   private $cachedQueries = [];
   
-  function __construct(
-    $dbConnection, $tableName, 
-    $tableCreationQuery = "", 
-    $initialDataInsertionQuery = ""
-  ) {
+  function __construct($dbConnection, $tableName) {
     $this->dbConnection = $dbConnection;
     $this->tableName = $tableName;
 

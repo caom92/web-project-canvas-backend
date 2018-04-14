@@ -132,13 +132,13 @@ function getCategoryHierarchy($hierarchyDescriptor)
 
   if ($hasChild) {
     $isChild =
-      isset($hierarchyDescriptor['@name'])
-      && array_key_exists('@name', $hierarchyDescriptor);
+      isset($hierarchyDescriptor['name'])
+      && array_key_exists('name', $hierarchyDescriptor);
 
     $child = getCategoryHierarchy($hierarchyDescriptor['child']);
     $parent = new ContinuingCategory(
       $hierarchyDescriptor['idColumn'],
-      ($isChild) ? $hierarchyDescriptor['@name'] : NULL,
+      ($isChild) ? $hierarchyDescriptor['name'] : NULL,
       $hierarchyDescriptor['parseDescriptor'],
       $child
     );
@@ -146,7 +146,7 @@ function getCategoryHierarchy($hierarchyDescriptor)
   } else {
     return new EndingCategory(
       $hierarchyDescriptor['idColumn'], 
-      $hierarchyDescriptor['@name'],
+      $hierarchyDescriptor['name'],
       $hierarchyDescriptor['parseDescriptor']
     );
   }
@@ -165,6 +165,14 @@ function parse($data, $descriptor)
     }
   }
   return $parsedData;
+}
+
+function parseArray($array, $descriptor) {
+  $parsedArray = [];
+  foreach ($array as $element) {
+    array_push($parsedArray, parse($element, $descriptor));
+  }
+  return $parsedArray;
 }
 
 
@@ -255,7 +263,7 @@ abstract class CategoryNode
   }
 
   protected function hasValueChanged($row) {
-    return $row[$this->idColumn] != $this->lastValue['id'];
+    return $row[$this->idColumn] !== $this->lastValue['id'];
   }
 
   protected function updateLastValue($row) {

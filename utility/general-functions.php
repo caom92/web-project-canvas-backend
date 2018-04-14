@@ -1,6 +1,6 @@
 <?php
 
-namespace Core;
+namespace Core\Utilities;
 
 function arrayHasStringKeys($array) 
 {
@@ -44,12 +44,17 @@ function getFileFormatFromName($filename)
   return substr($filename, $formatStartPos + 1);
 }
 
-function resetSessionID($session, $segment) 
+function resetSessionId($session, $segment) 
 {
   $userID = $segment->get('user_id');
   $segment->set('user_id', NULL);
   $session->regenerateId();
   $segment->set('user_id', $userID);
+}
+
+function getValueFromArrayIfExists($array, $key) {
+  return (isset($array[$key]) && array_key_exists($key, $array)) ?
+    $array[$key] : NULL;
 }
 
 ?>

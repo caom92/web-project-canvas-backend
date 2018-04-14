@@ -88,18 +88,18 @@ function isBoolean($data)
   }
 
   if (isInteger($data)) {
-    $data = intval($data);
-    return isInteger($data, 0, PHP_INT_MAX);
+    $intData = intval($data);
+    return isInteger($intData, 0, PHP_INT_MAX);
   }
 
   if (isString($data)) {
     return 
-      $data == 'true'  || 
-      $data == 'false' ||
-      $data == 'TRUE'  ||
-      $data == 'FALSE' ||
-      $data == '0'     ||
-      $data == '1';
+      $data === 'true'  || 
+      $data === 'false' ||
+      $data === 'TRUE'  ||
+      $data === 'FALSE' ||
+      $data === '0'     ||
+      $data === '1';
   }
 
   return false;

@@ -128,9 +128,18 @@ class ServiceProvider
         $serviceName = SERVICES_ROOT_URL.$serviceName;
         $serviceCallback = $this->getServiceCallback($serviceFilePath);
 
+        // https://www.slimframework.com/docs/v3/objects/router.html
         switch ($httpMethod) {
           case 'GET': 
             $this->slimApp->get($serviceName, $serviceCallback); 
+            break;
+
+          case 'PUT':
+            $this->slimApp->put($serviceName, $serviceCallback);
+            break;
+
+          case 'PATCH':
+            $this->slimApp->patch($serviceName, $serviceCallback);
             break;
 
           case 'POST': 
@@ -196,8 +205,18 @@ class ServiceProvider
     return function($config) {
       ini_set('session.name', 'SessionCookie');
       ini_set('session.hash_function', 'sha512');
-      ini_set('session.cookie_httponly', '1');
       ini_set('session.use_strict_mode', '1');
+
+      // Siempre y cuando estas 2 banderas estén activadas, podemos confiar en 
+      // que nuestra cookie de sesión no ha sido comprometida al ser recibida 
+      // desde el cliente
+      // https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
+      // http://resources.infosecinstitute.com/securing-cookies-httponly-secure-flags/#gref
+      ini_set('session.cookie_httponly', '1');
+      if (USE_HTTPS) {
+        ini_set('session.cookie_secure', '1');
+      }
+      
       $factory = new SessionFactory;
       return $factory->newInstance($_COOKIE);
     };
@@ -213,7 +232,7 @@ class ServiceProvider
         'X-Requested-With, Content-Type, Accept, Origin, Authorization'
       );
       $response = $response->withHeader(
-        'Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS'
+        'Access-Control-Allow-Methods', 'GET, PUT, PATCH, POST, DELETE, OPTIONS'
       );
       $response = $response->withHeader('Access-Control-Allow-Origin', '*');
       return $next($request, $response);
@@ -230,7 +249,7 @@ class ServiceProvider
         'X-Requested-With, Content-Type, Accept, Origin, Authorization'
       );
       $response = $response->withHeader(
-        'Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS'
+        'Access-Control-Allow-Methods', 'GET, PUT, PATCH, POST, DELETE, OPTIONS'
       );
       
       $currentOrigin = $_SERVER['HTTP_ORIGIN'];

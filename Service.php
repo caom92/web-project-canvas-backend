@@ -19,6 +19,8 @@ abstract class Service
     $this->inputDataDescriptor = $inputDataDescriptor;
   }
 
+  abstract function execute($modules, $data);  
+
   static function initDefaultValidators() {
     self::$validators = [
       'number' => new \Core\Validations\NumberValidator(),
@@ -40,8 +42,6 @@ abstract class Service
     self::$validators[$name] = $validator;
   }
   
-  abstract function execute($modules, $data);
-
   function validateInputData($modules, $data) {
     foreach ($this->inputDataDescriptor as $inputField => $attributes) {
       $wasInputValueProvided = 
