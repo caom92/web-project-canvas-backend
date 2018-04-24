@@ -61,16 +61,17 @@ abstract class Service
         if ($wasInputValueProvided) {
           $inputValue = $data[$inputField];
           $validatorIdx = $attributes['type'];  
+          $validator = self::$validators[$validatorIdx];
+          $validator->execute($modules, $inputField, $inputValue, $attributes);
         } else if (!$isOptional && !$isFileType) {
           throw new \Exception("Input value '$inputField' is undefined.", -101);
         }
       } else {
         $validatorIdx = $inputField;
         $inputValue = NULL;
+        $validator = self::$validators[$validatorIdx];
+        $validator->execute($modules, $inputField, $inputValue, $attributes);
       }
-
-      $validator = self::$validators[$validatorIdx];
-      $validator->execute($modules, $inputField, $inputValue, $attributes);
     }
   }
 }

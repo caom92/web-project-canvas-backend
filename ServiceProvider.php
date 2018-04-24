@@ -4,6 +4,7 @@ namespace Core;
 
 require_once realpath(__DIR__.'/../config/site.php');
 require_once realpath(__DIR__.'/../vendor/autoload.php');
+require_once realpath(__DIR__.'/utility/multipart.php');
 
 use \Slim\App;
 use \Monolog\Logger;
@@ -12,6 +13,7 @@ use \Aura\Session\SessionFactory;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Exception;
+use \Core\Utilities as util;
 
 
 class ServiceProvider 
@@ -28,6 +30,26 @@ class ServiceProvider
 
   function serveRemoteClient() {
     $this->slimApp->run();
+  }
+
+  private static function parseVerboseValues($inputData) {
+    $outputData = $inputData;
+    if (isset($inputData)) {
+      foreach ($inputData as $key => $value) {
+        if ($value === 'null' || $value === 'NULL' || $value === 'undefined') {
+          $outputData[$key] = NULL;
+        }
+
+        if ($value === 'true') {
+          $outputData[$key] = TRUE;
+        }
+
+        if ($value === 'false') {
+          $outputData[$key] = FALSE;
+        }
+      }
+    }
+    return $outputData;
   }
 
   private static function executeService(
@@ -110,7 +132,6 @@ class ServiceProvider
   }
 
   private function initSlimAppMiddleware() {
-    $this->slimApp->add($this->getCastNullStringsMiddleware());
     if (CORS_REQUESTS['allowed']) {
       $this->slimApp->add((CORS_REQUESTS['with_credentials']) ?
         $this->getInitCorsWithCredentialsMiddleware()
@@ -292,29 +313,23 @@ class ServiceProvider
     };
   }
 
-  private function getCastNullStringsMiddleware() {
-    return function(Request $request, Response $response, $next) {
-      $inputData = $request->getParsedBody();
-      if (isset($inputData)) {
-        foreach ($inputData as $key => $value) {
-          if (
-            $value === 'null' || $value === 'NULL' || $value === 'undefined'
-          ) {
-            $inputData[$key] = NULL;
-          }
-        }
-        $request = $request->withParsedBody($inputData);
-      }
-      return $next($request, $response);
-    };
-  }
-
   private function getServiceCallback($serviceFilePath) {
     return function(Request $request, Response $response, $args) 
       use ($serviceFilePath) 
     {
+      // Resulta que PHP no procesa los datos del cuerpo de una petición PATCH 
+      // o PUT con el encabezado Content-Type: multipart/form-data para que 
+      // puedan ser accedidos fácilmente de un arreglo asociativo, como sucede 
+      // con $_POST. Debido a esto, getParsedBody tampoco procesa estos datos y 
+      // por lo tanto siempre retorna NULL. Para evitar esto, debemos procesar 
+      // nosotros los datos manualmente
       $result = NULL;
-      $serviceInputData = $request->getParsedBody();
+      $serviceInputData = 
+        ServiceProvider::parseVerboseValues(
+          ($request->isPatch() || $request->isPut()) ? 
+            util\getParsedMultipartInput() : $request->getParsedBody()
+        );
+
       if (count($args) > 0) {
         $serviceInputData = array_merge(
           (isset($serviceInputData)) ? $serviceInputData : [], $args
