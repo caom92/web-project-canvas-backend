@@ -132,13 +132,10 @@ class FilesValidator implements Validator
 {
   // Override Validator
   function execute($modules, $name, $value, $attributes) {
-    // TODO: usar la interfaz de Slim en lugar de $_FILES
-    // https://www.slimframework.com/docs/v3/objects/request.html#uploaded-files
-    // https://www.slimframework.com/docs/v3/cookbook/uploading-files.html
-    $filename = $attributes['name'];
+    $filename = $attributes['filename'];
     $wasFileReceived = 
-      isset($_FILES[$filename]) 
-      && array_key_exists($filename, $_FILES);
+      isset($value[$filename]) 
+      && array_key_exists($filename, $value);
     $isOptional =
       isset($attributes['optional'])
       && array_key_exists('optional', $attributes);
@@ -153,49 +150,61 @@ class FilesValidator implements Validator
     if ($hasFormatAttribute) {
       switch ($attributes['format']) {
         case 'document':
-          $this->validateDocumentFile($filename);
-        break;
+          $this->validateFileFormat(
+            $value[$filename], 'document', function($filename) {
+              return isPdfFile($filename);
+            }
+          );
+          break;
 
         case 'bitmap':
-          $this->validateBitmapFile($filename);
-        break;
+        $this->validateFileFormat(
+          $value[$filename], 'bitmap', function($filename) {
+            return isBitmapFile($filename);
+          }
+        );
+          break;
       }
-    }
-  }
-
-  private function validateDocumentFile($filename) {
-    if (is_array($_FILES[$filename])) {
-      foreach ($_FILES[$filename]['tmp_name'] as $file) {
-        if (!isPdfFile($file)) {
-          throw new Exception(
-            "A file in '$filename' is not a document file",
-            -310
-          );
+    } else {
+      $this->validateFileFormat(
+        $value[$filename], 'bitmap nor a document', function($filename) {
+          $isBitmap = isBitmapFile($filename);
+          $isPdf = isPdfFile($filename);
+          return $isBitmap || $isPdf;
         }
-      }
-    } else if (!isPdfFile($_FILES[$filename]['tmp_name'])) {
-      throw new Exception(
-        "The file '{$_FILES[$filename]['name']}' is not a document file",
-        -310
       );
     }
   }
 
-  private function validateBitmapFile($filename) {
-    if (is_array($_FILES[$filename]['tmp_name'])) {
-      foreach ($_FILES[$filename]['tmp_name'] as $file) {
-        if (!isBitmapFile($file)) {
+  private function validateFileFormat($files, $format, $validator) {
+    if (is_array($files)) {
+      foreach ($files as $file) {
+        $filename = $file->file;
+        $errorCode = $file->getError();
+
+        if ($errorCode !== \UPLOAD_ERR_OK) {
           throw new Exception(
-            "A file in '$name' is not a bitmap file",
-            -311
+            "Failed to upload file '$filename'", $errorCode
+          );
+        } else if (!$validator($filename)) {
+          throw new Exception(
+            "File '$filename' is not a $format file", -310
           );
         }
       }
-    } else if (!isBitmapFile($_FILES[$filename]['tmp_name'])) {
-      throw new Exception(
-        "The file '{$_FILES[$filename]['name']}' is not a bitmap file",
-        -311
-      );
+    } else {
+      $filename = $files->file;
+      $errorCode = $files->getError();
+
+      if ($errorCode !== \UPLOAD_ERR_OK) {
+        throw new Exception(
+          "Failed to upload file '$filename'", $errorCode
+        );
+      } else if (!$validator($filename)) {
+        throw new Exception(
+          "File '$filename' is not a $format file", -310
+        );
+      }
     }
   }
 }

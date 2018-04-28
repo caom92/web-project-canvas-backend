@@ -335,6 +335,8 @@ class ServiceProvider
           (isset($serviceInputData)) ? $serviceInputData : [], $args
         );
       }
+
+      $serviceInputData['uploadedFiles'] = $request->getUploadedFiles();
       
       try {
         $result = ServiceProvider::executeService(

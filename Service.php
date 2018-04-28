@@ -55,15 +55,23 @@ abstract class Service
         && array_key_exists('optional', $attributes);
 
       $isFileType = ($hasTypeAttribute) ? 
-        $attributes['type'] == 'files' : FALSE;
+        $attributes['type'] === 'files' : FALSE;
 
       if ($hasTypeAttribute) {
         if ($wasInputValueProvided) {
           $inputValue = $data[$inputField];
           $validatorIdx = $attributes['type'];  
           $validator = self::$validators[$validatorIdx];
-          $validator->execute($modules, $inputField, $inputValue, $attributes);
-        } else if (!$isOptional && !$isFileType) {
+          $validator->execute(
+            $modules, $inputField, $inputValue, $attributes
+          );
+        } else if ($isFileType) {
+          $validator = self::$validators['files'];
+          $attributes['filename'] = $inputField;
+          $validator->execute(
+            $modules, 'uploadedFiles', $data['uploadedFiles'], $attributes
+          );
+        } else if (!$isOptional) {
           throw new \Exception("Input value '$inputField' is undefined.", -101);
         }
       } else {

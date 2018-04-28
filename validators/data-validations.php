@@ -54,9 +54,9 @@ function isEmailString($data)
 function isPdfFile($data) 
 {
   if (isset($data)) {
-    $fileInfo = new finfo();
+    $fileInfo = new \finfo();
     $fileType = $fileInfo->file($data);    
-    $pos = strpos($fileType, 'PDF');
+    $pos = \strpos($fileType, 'PDF');
     return ($pos !== FALSE);
   }
   return false;
