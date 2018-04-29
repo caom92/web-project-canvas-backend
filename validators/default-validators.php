@@ -180,29 +180,31 @@ class FilesValidator implements Validator
     if (is_array($files)) {
       foreach ($files as $file) {
         $filename = $file->file;
+        $clientFilename = $file->getClientFilename();
         $errorCode = $file->getError();
 
         if ($errorCode !== \UPLOAD_ERR_OK) {
           throw new Exception(
-            "Failed to upload file '$filename'", $errorCode
+            "Failed to upload file '$clientFilename'", $errorCode
           );
         } else if (!$validator($filename)) {
           throw new Exception(
-            "File '$filename' is not a $format file", -310
+            "File '$clientFilename' is not a $format file", -310
           );
         }
       }
     } else {
       $filename = $files->file;
+      $clientFilename = $files->getClientFilename();
       $errorCode = $files->getError();
 
       if ($errorCode !== \UPLOAD_ERR_OK) {
         throw new Exception(
-          "Failed to upload file '$filename'", $errorCode
+          "Failed to upload file '$clientFilename'", $errorCode
         );
       } else if (!$validator($filename)) {
         throw new Exception(
-          "File '$filename' is not a $format file", -310
+          "File '$clientFilename' is not a $format file", -310
         );
       }
     }
