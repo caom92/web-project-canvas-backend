@@ -28,6 +28,10 @@ abstract class Table
     return $this->cachedQueries[$query];
   }
 
+  protected function isArrayElementSet($array, $key) {
+    return isset($array[$key]) && array_key_exists($key, $array);
+  }
+
   private function isStatementCached($query) {
     return 
       isset($this->cachedQueries[$query])
