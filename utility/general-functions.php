@@ -2,14 +2,14 @@
 
 namespace Core\Utilities;
 
-function arrayHasStringKeys($array) 
+function arrayHasStringKeys($array)
 {
   $keys = array_keys($array);
   $stringKeys = array_filter($keys, 'is_string');
   return count($stringKeys) > 0;
 }
 
-// Retorna el nombre asignado al archivo una vez que fue almacenado en el 
+// Retorna el nombre asignado al archivo una vez que fue almacenado en el
 // servidor
 function storeUploadedFileInServer($file, $destinationDir) {
   $s = getFileSysSlash();
@@ -19,14 +19,14 @@ function storeUploadedFileInServer($file, $destinationDir) {
   return "$basename.$extension";
 }
 
-function getFileSysSlash() 
+function getFileSysSlash()
 {
   $osName = substr(PHP_OS, 0, 3);
   $osName = strtoupper($osName);
   return ($osName === 'WIN') ? '\\' : '/';
 }
 
-function resetSessionId($session, $segment) 
+function resetSessionId($session, $segment)
 {
   $userID = $segment->get('user_id');
   $segment->set('user_id', NULL);
