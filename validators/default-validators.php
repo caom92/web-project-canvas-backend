@@ -5,7 +5,7 @@ require_once realpath(__DIR__.'/Validator.php');
 use \Exception;
 
 
-class NumberValidator implements Validator 
+class NumberValidator implements Validator
 {
   // Override Validator
   function execute($modules, $name, $value, $attributes) {
@@ -18,13 +18,13 @@ class NumberValidator implements Validator
   }
 }
 
-class IntegerValidator implements Validator 
+class IntegerValidator implements Validator
 {
   // Override Validator
   function execute($modules, $name, $value, $attributes) {
-    $min = (isset($attributes['min'])) ? 
+    $min = (isset($attributes['min'])) ?
       $attributes['min'] : INT_MIN;
-    $max = (isset($attributes['max'])) ? 
+    $max = (isset($attributes['max'])) ?
       $attributes['max'] : PHP_INT_MAX;
 
     if (!isInteger($value, $min, $max)) {
@@ -36,7 +36,7 @@ class IntegerValidator implements Validator
   }
 }
 
-class FloatValidator implements Validator 
+class FloatValidator implements Validator
 {
   // Override Validator
   function execute($modules, $name, $value, $attributes) {
@@ -49,7 +49,7 @@ class FloatValidator implements Validator
   }
 }
 
-class BooleanValidator implements Validator 
+class BooleanValidator implements Validator
 {
   // Override Validator
   function execute($modules, $name, $value, $attributes) {
@@ -62,7 +62,7 @@ class BooleanValidator implements Validator
   }
 }
 
-class StringValidator implements Validator 
+class StringValidator implements Validator
 {
   // Override Validator
   function execute($modules, $name, $value, $attributes) {
@@ -74,7 +74,7 @@ class StringValidator implements Validator
       $minLength = $maxLength = $attributes['length'];
     } else {
       $minLength = ($hasMinLengthAttribute) ? $attributes['min_length'] : 0;
-      $maxLength = ($hasMaxLengthAttribute) ? 
+      $maxLength = ($hasMaxLengthAttribute) ?
         $attributes['max_length'] : PHP_INT_MAX;
     }
 
@@ -88,7 +88,7 @@ class StringValidator implements Validator
   }
 }
 
-class EmailValidator implements Validator 
+class EmailValidator implements Validator
 {
   // Override Validator
   function execute($modules, $name, $value, $attributes) {
@@ -101,7 +101,7 @@ class EmailValidator implements Validator
   }
 }
 
-class PhoneValidator implements Validator 
+class PhoneValidator implements Validator
 {
   // Override Validator
   function execute($modules, $name, $value, $attributes) {
@@ -114,7 +114,7 @@ class PhoneValidator implements Validator
   }
 }
 
-class DateTimeValidator implements Validator 
+class DateTimeValidator implements Validator
 {
   // Override Validator
   function execute($modules, $name, $value, $attributes) {
@@ -128,18 +128,18 @@ class DateTimeValidator implements Validator
   }
 }
 
-class FilesValidator implements Validator 
+class FilesValidator implements Validator
 {
   // Override Validator
   function execute($modules, $name, $value, $attributes) {
     $filename = $attributes['filename'];
-    $wasFileReceived = 
-      isset($value[$filename]) 
+    $wasFileReceived =
+      isset($value[$filename])
       && array_key_exists($filename, $value);
     $isOptional =
       isset($attributes['optional'])
       && array_key_exists('optional', $attributes);
-    $hasFormatAttribute = 
+    $hasFormatAttribute =
       isset($attributes['format'])
       && array_key_exists('format', $attributes);
 
@@ -211,27 +211,27 @@ class FilesValidator implements Validator
   }
 }
 
-// Se decidio duplicar la funcion Service::validateInputData y el arreglo 
-// Service::validators debido a que estos se invocan de forma recursiva al 
-// validar arreglos, pero, como estan declarados en Service y Service importa 
-// ArrayValidator, se genera una dependencia circular que no puede resolverse. 
-// La unica alternativa es que ArrayValidator tenga su propia copia de estos 
+// Se decidio duplicar la funcion Service::validateInputData y el arreglo
+// Service::validators debido a que estos se invocan de forma recursiva al
+// validar arreglos, pero, como estan declarados en Service y Service importa
+// ArrayValidator, se genera una dependencia circular que no puede resolverse.
+// La unica alternativa es que ArrayValidator tenga su propia copia de estos
 // atributos, que es lo que hacemos aqui
-class ArrayValidator implements Validator 
+class ArrayValidator implements Validator
 {
   private $validators;
-  
+
   function setValidators($validators) {
     $this->validators = $validators;
   }
 
   // Override Validator
   function execute($modules, $name, $value, $attributes) {
-    $isOptional = 
-      isset($attributes['optional']) 
+    $isOptional =
+      isset($attributes['optional'])
       && array_key_exists('optional', $attributes);
 
-    $isSimpleArray = 
+    $isSimpleArray =
       isset($attributes['values']['type'])
       && array_key_exists('type', $attributes['values']);
 
@@ -262,13 +262,13 @@ class ArrayValidator implements Validator
     $modules, $element, $elementDescriptor
   ) {
     foreach ($elementDescriptor as $name => $attributes) {
-      $isOptional = 
+      $isOptional =
         isset($attributes['optional'])
         && array_key_exists('optional', $attributes);
-      $hasTypeAttribute = 
+      $hasTypeAttribute =
         isset($attributes['type'])
         && array_key_exists('type', $attributes);
-      $wasValueProvided = 
+      $wasValueProvided =
         isset($element[$name])
         && array_key_exists($name, $element);
       $isFileType = $attributes['type'] == 'files';

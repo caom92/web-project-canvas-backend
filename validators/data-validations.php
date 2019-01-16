@@ -2,25 +2,25 @@
 
 namespace Core\Validations;
 
-function equalsValue($data, $value) 
+function equalsValue($data, $value)
 {
   if (isset($data)) {
     return $data === $value;
-  } 
+  }
   return false;
 }
 
-function isNumeric($data) 
+function isNumeric($data)
 {
   return is_numeric($data);
 }
 
 const INT_MIN = ~PHP_INT_MAX;
-function isInteger($data, $min = INT_MIN, $max = PHP_INT_MAX) 
+function isInteger($data, $min = INT_MIN, $max = PHP_INT_MAX)
 {
   return filter_var(
-    $data, 
-    FILTER_VALIDATE_INT, 
+    $data,
+    FILTER_VALIDATE_INT,
     [ 'options' => [
       'min_range' => $min,
       'max_range' => $max
@@ -28,16 +28,16 @@ function isInteger($data, $min = INT_MIN, $max = PHP_INT_MAX)
   ) !== FALSE;
 }
 
-function isFloat($data) 
+function isFloat($data)
 {
   return filter_var(
-    $data, 
+    $data,
     FILTER_VALIDATE_FLOAT,
     FILTER_FLAG_ALLOW_THOUSAND
   ) !== FALSE;
 }
 
-function isString($data, $minLength = 0, $maxLength = PHP_INT_MAX) 
+function isString($data, $minLength = 0, $maxLength = PHP_INT_MAX)
 {
   if (is_string($data)) {
     $currentLength = strlen($data);
@@ -46,23 +46,23 @@ function isString($data, $minLength = 0, $maxLength = PHP_INT_MAX)
   return false;
 }
 
-function isEmailString($data) 
+function isEmailString($data)
 {
   return filter_var($data, FILTER_VALIDATE_EMAIL) !== FALSE;
 }
 
-function isPdfFile($data) 
+function isPdfFile($data)
 {
   if (isset($data)) {
     $fileInfo = new \finfo();
-    $fileType = $fileInfo->file($data);    
+    $fileType = $fileInfo->file($data);
     $pos = \strpos($fileType, 'PDF');
     return ($pos !== FALSE);
   }
   return false;
 }
 
-function isBitmapFile($data) 
+function isBitmapFile($data)
 {
   if (isset($data)) {
     $fileType = exif_imagetype($data);
@@ -75,13 +75,13 @@ function isBitmapFile($data)
   return false;
 }
 
-function isDateTime($data, $format) 
+function isDateTime($data, $format)
 {
   $dateTime = \DateTime::createFromFormat($format, $data);
   return $dateTime !== FALSE;
 }
 
-function isBoolean($data) 
+function isBoolean($data)
 {
   if (is_bool($data)) {
     return true;
@@ -93,8 +93,8 @@ function isBoolean($data)
   }
 
   if (isString($data)) {
-    return 
-      $data === 'true'  || 
+    return
+      $data === 'true'  ||
       $data === 'false' ||
       $data === 'TRUE'  ||
       $data === 'FALSE' ||
@@ -105,14 +105,14 @@ function isBoolean($data)
   return false;
 }
 
-function isPhoneNumber($data) 
+function isPhoneNumber($data)
 {
   $phone = strtolower($data);
 
   // remueve guiones, espacios, parentesis, puntos y cadenas ext y Ext
   $phone = preg_replace('/\(|\)|\s|\.|\-|ext|Ext|EXT/', '', $phone);
 
-  // revisa si la cadena contiene numeros con un + opcional al principio 
+  // revisa si la cadena contiene numeros con un + opcional al principio
   // solamente
   return preg_match_all('/^\+\d{7,15}$|^\d{7,16}$/', $phone) === 1;
 }
