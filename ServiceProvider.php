@@ -16,10 +16,10 @@ use \Exception;
 use \Core\Utilities as util;
 
 
-class ServiceProvider 
+class ServiceProvider
 {
   private $slimApp;
-  
+
   function __construct($customModules, $serviceDefinitionFilePaths) {
     $this->initSlimApp();
     $this->initSlimAppHandlers();
@@ -59,7 +59,7 @@ class ServiceProvider
     if (!$isFilePathValid) {
       throw new Exception(
         "Failed to import the service definition file '$filePath', ".
-        "the file could not be found. Check that the file exists and ". 
+        "the file could not be found. Check that the file exists and ".
         "that the file path is spelled correctly.",
         -100
       );
@@ -78,7 +78,7 @@ class ServiceProvider
     }
 
     $errorMessage = $exception->getMessage();
-    $isErrorMessageValid = 
+    $isErrorMessageValid =
       isset($errorMessage) && strlen($errorMessage) > 0;
     if (!$isErrorMessageValid) {
       $errorMessage = 'Unknown exception ocurred.';
@@ -151,8 +151,8 @@ class ServiceProvider
 
         // https://www.slimframework.com/docs/v3/objects/router.html
         switch ($httpMethod) {
-          case 'GET': 
-            $this->slimApp->get($serviceName, $serviceCallback); 
+          case 'GET':
+            $this->slimApp->get($serviceName, $serviceCallback);
             break;
 
           case 'PUT':
@@ -163,11 +163,11 @@ class ServiceProvider
             $this->slimApp->patch($serviceName, $serviceCallback);
             break;
 
-          case 'POST': 
-            $this->slimApp->post($serviceName, $serviceCallback); 
+          case 'POST':
+            $this->slimApp->post($serviceName, $serviceCallback);
             break;
 
-          case 'DELETE': 
+          case 'DELETE':
             $this->slimApp->delete($serviceName, $serviceCallback);
             break;
 
@@ -200,9 +200,9 @@ class ServiceProvider
   private function getNotAllowedHandler() {
     return function($config) {
       return function(Request $request, Response $response, $allowedHttpMethods)
-        use ($config) 
+        use ($config)
       {
-        $allowedHttpMethods = implode(', ', $allowedHttpMethods); 
+        $allowedHttpMethods = implode(', ', $allowedHttpMethods);
         return $config['response']
           ->withStatus(405)
           ->withHeader('Allow', $allowedHttpMethods)
@@ -218,7 +218,7 @@ class ServiceProvider
     return function($config) {
       $loggerModule = new Logger('AppLog');
       $loggerModule->pushHandler(new StreamHandler(LOG_FILE_PATH));
-      return $loggerModule; 
+      return $loggerModule;
     };
   }
 
@@ -228,8 +228,8 @@ class ServiceProvider
       ini_set('session.hash_function', 'sha512');
       ini_set('session.use_strict_mode', '1');
 
-      // Siempre y cuando estas 2 banderas estén activadas, podemos confiar en 
-      // que nuestra cookie de sesión no ha sido comprometida al ser recibida 
+      // Siempre y cuando estas 2 banderas estén activadas, podemos confiar en
+      // que nuestra cookie de sesión no ha sido comprometida al ser recibida
       // desde el cliente
       // https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
       // http://resources.infosecinstitute.com/securing-cookies-httponly-secure-flags/#gref
@@ -237,7 +237,7 @@ class ServiceProvider
       if (USE_HTTPS) {
         ini_set('session.cookie_secure', '1');
       }
-      
+
       $factory = new SessionFactory;
       return $factory->newInstance($_COOKIE);
     };
@@ -249,7 +249,7 @@ class ServiceProvider
         'Content-Type', 'application/json;charset=utf8'
       );
       $response = $response->withHeader(
-        'Access-Control-Allow-Headers', 
+        'Access-Control-Allow-Headers',
         'X-Requested-With, Content-Type, Accept, Origin, Authorization'
       );
       $response = $response->withHeader(
@@ -266,13 +266,13 @@ class ServiceProvider
         'Content-Type', 'application/json;charset=utf8'
       );
       $response = $response->withHeader(
-        'Access-Control-Allow-Headers', 
+        'Access-Control-Allow-Headers',
         'X-Requested-With, Content-Type, Accept, Origin, Authorization'
       );
       $response = $response->withHeader(
         'Access-Control-Allow-Methods', 'GET, PUT, PATCH, POST, DELETE, OPTIONS'
       );
-      
+
       $currentOrigin = $_SERVER['HTTP_ORIGIN'];
       $isOriginAllowed = FALSE;
       foreach (CORS_REQUESTS['allowed_origins'] as $origin) {
@@ -306,7 +306,7 @@ class ServiceProvider
   private function getInitResponseHeadersMiddleware() {
     return function(Request $request, Response $response, $next) {
       $response = $response->withHeader(
-        'Content-Type', 
+        'Content-Type',
         'application/json;charset=utf8'
       );
       return $next($request, $response);
@@ -314,19 +314,19 @@ class ServiceProvider
   }
 
   private function getServiceCallback($serviceFilePath) {
-    return function(Request $request, Response $response, $args) 
-      use ($serviceFilePath) 
+    return function(Request $request, Response $response, $args)
+      use ($serviceFilePath)
     {
-      // Resulta que PHP no procesa los datos del cuerpo de una petición PATCH 
-      // o PUT con el encabezado Content-Type: multipart/form-data para que 
-      // puedan ser accedidos fácilmente de un arreglo asociativo, como sucede 
-      // con $_POST. Debido a esto, getParsedBody tampoco procesa estos datos y 
-      // por lo tanto siempre retorna NULL. Para evitar esto, debemos procesar 
+      // Resulta que PHP no procesa los datos del cuerpo de una petición PATCH
+      // o PUT con el encabezado Content-Type: multipart/form-data para que
+      // puedan ser accedidos fácilmente de un arreglo asociativo, como sucede
+      // con $_POST. Debido a esto, getParsedBody tampoco procesa estos datos y
+      // por lo tanto siempre retorna NULL. Para evitar esto, debemos procesar
       // nosotros los datos manualmente
       $result = NULL;
-      $serviceInputData = 
+      $serviceInputData =
         ServiceProvider::parseVerboseValues(
-          ($request->isPatch() || $request->isPut()) ? 
+          ($request->isPatch() || $request->isPut()) ?
             util\getParsedMultipartInput() : $request->getParsedBody()
         );
 
@@ -336,8 +336,16 @@ class ServiceProvider
         );
       }
 
+      $queryParams = $request->getQueryParams();
+      if (count($queryParams) > 0) {
+        $queryParams = ServiceProvider::parseVerboseValues($queryParams);
+        $serviceInputData = array_merge(
+          (isset($serviceInputData)) ? $serviceInputData : [], $queryParams
+        );
+      }
+
       $serviceInputData['uploadedFiles'] = $request->getUploadedFiles();
-      
+
       try {
         $result = ServiceProvider::executeService(
           $this, $serviceFilePath, $serviceInputData
@@ -347,7 +355,7 @@ class ServiceProvider
       } finally {
         $response->getBody()->write($result);
       }
-      
+
       return $response;
     };
   }

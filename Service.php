@@ -4,22 +4,22 @@ namespace Core;
 require_once realpath(__DIR__.'/validators/default-validators.php');
 
 
-// Se decidio que modules tuviera que ser proveido explicitamente como 
-// argumento de los metodos de esta clase en lugar de hacerlo un atributo de la 
-// misma porque, como la creacion de la instancia de esta clase esta oculta 
-// (vea el cuerpo de ServiceProvider::executeService), no queremos que el 
-// lector se confunda y tenga que buscar en varios archivos para saber de 
+// Se decidio que modules tuviera que ser proveido explicitamente como
+// argumento de los metodos de esta clase en lugar de hacerlo un atributo de la
+// misma porque, como la creacion de la instancia de esta clase esta oculta
+// (vea el cuerpo de ServiceProvider::executeService), no queremos que el
+// lector se confunda y tenga que buscar en varios archivos para saber de
 // donde proviene exactamente la instancia que se provee en modules
-abstract class Service 
+abstract class Service
 {
   private static $validators;
   private $inputDataDescriptor;
-  
+
   function __construct($inputDataDescriptor) {
     $this->inputDataDescriptor = $inputDataDescriptor;
   }
 
-  abstract function execute($modules, $data);  
+  abstract function execute($modules, $data);
 
   static function initDefaultValidators() {
     self::$validators = [
@@ -36,31 +36,31 @@ abstract class Service
     ];
 
     self::$validators['array']->setValidators(self::$validators);
-  }  
+  }
 
   static function addInputDataValidator($name, $validator) {
     self::$validators[$name] = $validator;
   }
-  
+
   function validateInputData($modules, $data) {
     foreach ($this->inputDataDescriptor as $inputField => $attributes) {
-      $wasInputValueProvided = 
+      $wasInputValueProvided =
         isset($data[$inputField]) && array_key_exists($inputField, $data);
 
-      $hasTypeAttribute = 
+      $hasTypeAttribute =
         isset($attributes['type']) && array_key_exists('type', $attributes);
-      
-      $isOptional = 
+
+      $isOptional =
         isset($attributes['optional'])
         && array_key_exists('optional', $attributes);
 
-      $isFileType = ($hasTypeAttribute) ? 
+      $isFileType = ($hasTypeAttribute) ?
         $attributes['type'] === 'files' : FALSE;
 
       if ($hasTypeAttribute) {
         if ($wasInputValueProvided) {
           $inputValue = $data[$inputField];
-          $validatorIdx = $attributes['type'];  
+          $validatorIdx = $attributes['type'];
           $validator = self::$validators[$validatorIdx];
           $validator->execute(
             $modules, $inputField, $inputValue, $attributes
